@@ -1,0 +1,24 @@
+{% extends "freelo_app/layout.html" %}
+
+{% block title %}
+landing_freelo_app
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="header">
+        landing_freelo_app.html
+    </h1>
+
+    <div>
+        <div>
+            <a href="{% url 'landing_lol' %}" class="subheader">
+                lol
+            </a>
+            <a href="{% url 'landing_val' %}" class="subheader">
+                val
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

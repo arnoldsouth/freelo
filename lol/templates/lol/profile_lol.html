@@ -1,0 +1,91 @@
+{% extends "lol/layout.html" %}
+{% block title %}
+player_data_lol
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="header">
+        profile_lol.html
+    </h1>
+</div>
+
+<!-- Player's summoner level and name -->
+<div>
+    <h5>Level: {{ player_data.6 }}</h5>
+    <h2>{{ player_data.3 }}</h2>
+</div>
+
+<br />
+
+<div>
+    {% for rank in rank_data %}
+    <div>
+        <div>
+            Queue Type: {{ rank.queueType }}
+        </div>
+        <div>
+            Tier: {{ rank.tier }}
+        </div>
+        <div>
+            Rank: {{ rank.rank }}
+        </div>
+        <div>
+            League Points: {{ rank.leaguePoints }}
+        </div>
+        <div>
+            Wins: {{ rank.wins }}
+        </div>
+        <div>
+            Losses: {{ rank.losses }}
+        </div>
+    </div>
+    
+    <br/>
+    {% endfor %}
+</div>
+
+<div >
+    <h2>Match History</h2>
+    
+    {% if match_history %}
+    <div >
+        {% for match in match_history %}
+        <div >
+            <h3>Match ID: {{ forloop.counter }}</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Win</th>
+                        <th>Team</th>
+                        <th>Summoner Name</th>
+                        <th>Role</th>
+                        <th>Champion Name</th>
+                        <th>Kills</th>
+                        <th>Deaths</th>
+                        <th>Assists</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in match %}
+                    <tr>
+                        <td>{{ player.win }}</td>
+                        <td>{{ player.teamId }}</td>
+                        <td>{{ player.summonerName }}</td>
+                        <td>{{ player.role }}</td>
+                        <td>{{ player.championName }}</td>
+                        <td>{{ player.kills }}</td>
+                        <td>{{ player.deaths }}</td>
+                        <td>{{ player.assists }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No matches found.</p>
+    {% endif %}
+</div>
+{% endblock %}
