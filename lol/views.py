@@ -3,10 +3,11 @@ from django.shortcuts import render
 import requests
 
 
-RIOT_API_KEY = "RGAPI-a3f6bb49-0d83-4ce0-9856-a7132723d679"
+RIOT_API_KEY = "RGAPI-56df76f6-4788-446f-801f-6d9920728ec2"
 ACCOUNT_V1_API_URL = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{}/{}?api_key={}"
 SUMMONER_V4_BY_PUUID_API_URL = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{}?api_key={}"
 LEAGUE_V4_BY_ENCRYPTED_SUMMONER_ID_API_URL = "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{}?api_key={}"
+LEAGUE_V4_CHALLENGER_LEAGUE_API_URL = "https://na1.api.riotgames.com/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5?api_key={}"
 MATCH_V5_LIST_BY_PUUID_API_URL = "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{}/ids?type=ranked&start=0&count=5&api_key={}"
 MATCH_V5_BY_MATCH_ID_API_URL = (
     "https://americas.api.riotgames.com/lol/match/v5/matches/{}?api_key={}"
@@ -49,6 +50,8 @@ def get_player_data(puuid):
     profileIconId = data["profileIconId"]
     revisionDate = data["revisionDate"]
     summonerLevel = data["summonerLevel"]
+    dd_profileIconId = f"http://ddragon.leagueoflegends.com/cdn/13.16.1/img/profileicon/{profileIconId}.png"
+    # print(f"dd_profileIconId: {dd_profileIconId}")
     return (
         id,
         accountId,
@@ -57,6 +60,7 @@ def get_player_data(puuid):
         profileIconId,
         revisionDate,
         summonerLevel,
+        dd_profileIconId,
     )
 
 
@@ -77,7 +81,7 @@ def get_player_rank(id):
             and "losses" in entry
         ):
             queueType = entry["queueType"]
-            tier = entry["tier"]
+            tier = entry["tier"].capitalize()
             rank = entry["rank"]
             leaguePoints = entry["leaguePoints"]
             wins = entry["wins"]
@@ -114,22 +118,58 @@ def get_match_history(match_id_list):
         match_data = []
         participants_data = data["info"]["participants"]
         for player in participants_data:
-            results = {
+            player_info = {
                 "win": player["win"],
                 "teamId": player["teamId"],
                 "summonerName": player["summonerName"],
                 "role": player["role"].capitalize(),
                 "championName": player["championName"],
                 "kills": player["kills"],
-                "deaths": player.get("deaths"),
-                "assists": player.get("assists"),
+                "deaths": player["deaths"],
+                "assists": player["assists"],
             }
-            match_data.append(results)
+            match_data.append(player_info)
 
         match_history.append(match_data)
         print(match_history)
 
     return match_history
+
+
+def leaderboards_lol(request):
+    url = LEAGUE_V4_CHALLENGER_LEAGUE_API_URL.format(RIOT_API_KEY)
+    print(url)
+    data = get_data_from_api_url(url)
+
+    players = data["entries"]
+
+    leaderboard_data = sorted(
+        [
+            {
+                "summonerName": player.get("summonerName"),
+                "leaguePoints": player.get("leaguePoints"),
+                "rank": player.get("rank"),
+                "wins": player.get("wins"),
+                "losses": player.get("losses"),
+                "matchesPlayed": (
+                    int(player.get("wins")) + int(player.get("losses"))
+                ),
+                "winPercentage": "{:.0%}".format(
+                    int(player.get("wins"))
+                    / (int(player.get("wins")) + int(player.get("losses")))
+                ),
+            }
+            for player in players
+        ],
+        key=lambda x: x["leaguePoints"],
+        reverse=True,
+    )
+
+    return render(
+        request,
+        "lol/leaderboards_lol.html",
+        {"leaderboard_data": leaderboard_data},
+    )
 
 
 def search_lol(request):
@@ -154,6 +194,6 @@ def search_lol(request):
                 },
             )
         except Exception as e:
-            return render(request, "lol/layout.html", {"error": str(e)})
+            return render(request, "lol/landing_lol.html", {"error": str(e)})
 
-    return render(request, "lol/layout.html")
+    return render(request, "lol/landing_lol.html")

@@ -1,0 +1,45 @@
+{% extends "val/layout.html" %}
+
+{% block title %}
+profile_val
+{% endblock %}
+
+
+{% block content %}
+<div>
+    <h1 class="header">
+        profile_val.html
+    </h1>
+</div>
+
+
+<div>
+    <h5>Level: {{ account_data.1 }}</h5>
+    <img src='{{ account_data.4 }}' alt="card" width="64" height="64">
+    <h2>{{ account_data.2 }} #{{ account_data.3 }}</h2>
+</div>
+
+
+<br />
+
+
+<div>
+    <img src="{{ mmr_elo.2 }}" alt="mmr_elo.2" width="64" height="64">
+        
+    <div>
+        Tier: {{ mmr_elo.1 }}
+    </div>
+    <div>
+        Ranked Rating: {{ mmr_elo.3 }}
+    </div>
+    <div>
+        Wins: {{ mmr_record.0 }}
+    </div>
+    <div>
+        Losses: {{ mmr_record.1 }}
+    </div>
+</div>
+
+
+
+{% endblock %}

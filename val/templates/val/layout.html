@@ -11,12 +11,34 @@
     <title>{% block title %} {%endblock%}</title>
 </head>
 
+
 <body>
     <div class="navbar">
         <a href="{% url 'landing_freelo_app' %}" class="navbar-brand">freelo</a>
         <a href="{% url 'landing_lol' %}" class="navbar-item">lol</a>
         <a href="{% url 'landing_val' %}" class="navbar-item">val</a>
     </div>
+
+
+    <div class="navbar-mini">
+        {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+        {% endif %}
+    
+        <form method="post" action="{% url 'search_val' %}">
+            {% csrf_token %}
+    
+            <input type="text" name="name" placeholder="Name" class="form-input" required>
+            <input type="text" name="tag" placeholder="Tag" class="form-input" required>
+    
+            <button type="submit" class="form-button">
+                Search
+            </button>
+        </form>
+    </div>
+
 
     <div class="body-content">
         {% block content %}

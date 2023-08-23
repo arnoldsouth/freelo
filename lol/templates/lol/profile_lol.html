@@ -1,7 +1,8 @@
 {% extends "lol/layout.html" %}
 {% block title %}
-player_data_lol
+profile_lol
 {% endblock %}
+
 
 {% block content %}
 <div>
@@ -10,26 +11,29 @@ player_data_lol
     </h1>
 </div>
 
-<!-- Player's summoner level and name -->
+
 <div>
     <h5>Level: {{ player_data.6 }}</h5>
+    <img src='{{ player_data.7 }}' alt="dd_profileIconId" width="64" height="64">
     <h2>{{ player_data.3 }}</h2>
 </div>
 
+
 <br />
+
 
 <div>
     {% for rank in rank_data %}
     <div>
-        <div>
+        <!-- <div>
             Queue Type: {{ rank.queueType }}
-        </div>
+        </div> -->
         <div>
             Tier: {{ rank.tier }}
         </div>
-        <div>
+        <!-- <div>
             Rank: {{ rank.rank }}
-        </div>
+        </div> -->
         <div>
             League Points: {{ rank.leaguePoints }}
         </div>
@@ -39,11 +43,14 @@ player_data_lol
         <div>
             Losses: {{ rank.losses }}
         </div>
+
     </div>
+    
     
     <br/>
     {% endfor %}
 </div>
+
 
 <div >
     <h2>Match History</h2>
@@ -88,4 +95,6 @@ player_data_lol
     <p>No matches found.</p>
     {% endif %}
 </div>
+
+
 {% endblock %}

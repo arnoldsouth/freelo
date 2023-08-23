@@ -1,0 +1,44 @@
+{% extends "val/layout.html" %}
+
+{% block title %}
+leaderboards_val
+
+{% endblock %}
+
+
+{% block content %}
+<div>
+    <div class="container">
+        <h1>VAL Leaderboards</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Player</th>
+                    <!-- <th scope="col">Tag</th> -->
+                    <!-- <th scope="col">Rank</th> -->
+                    <th scope="col">Ranked Rating</th>
+                    <th scope="col">Wins</th>
+                    <!-- <th scope="col">Competitive Tier</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in leaderboard_data %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ player.gameName }} #{{ player.tagLine }}</td>
+                    <!-- <td>{{ player.tagLine }}</td> -->
+                    <!-- <td>{{ player.leaderboardRank }}</td> -->
+                    <td>{{ player.rankedRating }}</td>
+                    <td>{{ player.numberOfWins }}</td>
+                    <!-- <td>{{ player.competitiveTier }}</td> -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    
+</div>
+
+{% endblock %}
