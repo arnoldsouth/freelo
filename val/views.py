@@ -4,7 +4,7 @@ from django.shortcuts import render
 import requests
 
 
-RIOT_API_KEY = "RGAPI-56df76f6-4788-446f-801f-6d9920728ec2"
+RIOT_API_KEY = "RGAPI-c90d95e2-ef7b-4798-ae5e-79bf598aec9f"
 ACCOUNT_V1_API_URL = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{}/{}?api_key={}"
 VAL_CONTENT_V1_BY_LOCALE_API_URL = "https://na.api.riotgames.com/val/content/v1/contents?locale=en-US&api_key={}"
 VAL_RANKED_V1_BY_ACT_API_URL = "https://na.api.riotgames.com/val/ranked/v1/leaderboards/by-act/{}?size=200&startIndex=0&api_key={}"
@@ -12,13 +12,13 @@ VAL_RANKED_V1_BY_ACT_API_URL = "https://na.api.riotgames.com/val/ranked/v1/leade
 HENRIK_V1_ACCOUNT_API_URL = (
     "https://api.henrikdev.xyz/valorant/v1/account/{}/{}"
 )
-HENRIK_V1_LIFETIME_MATCHES_API_URL = "https://api.henrikdev.xyz/valorant/v1/lifetime/matches/na/{}/{}?mode=competitive"
-HENRIK_V2_MATCH_DETAIL_API_URL = (
-    "https://api.henrikdev.xyz/valorant/v2/match/{}"
-)
 HENRIK_V1_MMR_API_URL = "https://api.henrikdev.xyz/valorant/v1/mmr/na/{}/{}"
 HENRIK_V2_MMR_API_URL = (
     "https://api.henrikdev.xyz/valorant/v2/mmr/na/{}/{}?season=e7a1"
+)
+HENRIK_V1_LIFETIME_MATCHES_API_URL = "https://api.henrikdev.xyz/valorant/v1/lifetime/matches/na/{}/{}?mode=competitive&size=5"
+HENRIK_V2_MATCH_DETAIL_API_URL = (
+    "https://api.henrikdev.xyz/valorant/v2/match/{}"
 )
 
 
@@ -30,6 +30,7 @@ def get_data_from_api_url(api_url):
     response = requests.get(api_url)
     response.raise_for_status()
     data = response.json()
+
     return data
 
 
@@ -39,20 +40,22 @@ def get_account(gameName, tagLine):
     url = ACCOUNT_V1_API_URL.format(
         encoded_gameName, encoded_tagLine, RIOT_API_KEY
     )
-    print(url)
     data = get_data_from_api_url(url)
+
     puuid = data["puuid"]
     gameName = data["gameName"]
     tagLine = data["tagLine"]
+
     return puuid, gameName, tagLine
 
 
 def get_content():
     url = VAL_CONTENT_V1_BY_LOCALE_API_URL.format(RIOT_API_KEY)
-    print(url)
     data = get_data_from_api_url(url)
+
     acts = data["acts"]
     print(f"\nacts: {acts}")
+
     return acts
 
 
@@ -68,9 +71,11 @@ def get_leaderboards():
     actId = get_active_act()
     if not actId:
         return {}
+
     url = VAL_RANKED_V1_BY_ACT_API_URL.format(actId, RIOT_API_KEY)
     print(f"\nurl: {url}")
     data = get_data_from_api_url(url)
+
     return data
 
 
@@ -102,14 +107,14 @@ def get_account_data(name, tag):
     encoded_name = quote(name)
     encoded_tag = quote(tag)
     url = HENRIK_V1_ACCOUNT_API_URL.format(encoded_name, encoded_tag)
-    print(url)
     data = get_data_from_api_url(url)
+
     puuid = data["data"]["puuid"]
     account_level = data["data"]["account_level"]
     name = data["data"]["name"]
     tag = data["data"]["tag"]
     card = data["data"]["card"]["small"]
-    print(puuid)
+
     return puuid, account_level, name, tag, card
 
 
@@ -117,13 +122,13 @@ def get_mmr_elo(name, tag):
     encoded_name = quote(name)
     encoded_tag = quote(tag)
     url = HENRIK_V1_MMR_API_URL.format(encoded_name, encoded_tag)
-    print(url)
     data = get_data_from_api_url(url)
 
     currenttier = data["data"]["currenttier"]
     currenttierpatched = data["data"]["currenttierpatched"]
     images = data["data"]["images"]["small"]
     elo = data["data"]["elo"]
+
     return currenttier, currenttierpatched, images, elo
 
 
@@ -131,7 +136,6 @@ def get_mmr_record(name, tag):
     encoded_name = quote(name)
     encoded_tag = quote(tag)
     url = HENRIK_V2_MMR_API_URL.format(encoded_name, encoded_tag)
-    print(url)
     data = get_data_from_api_url(url)
 
     number_of_games = data["data"]["number_of_games"]
@@ -141,42 +145,51 @@ def get_mmr_record(name, tag):
     return wins, losses, rank
 
 
-# TODO
-# def get_match_id_list(name, tag):
-#     encoded_name = quote(name)
-#     encoded_tag = quote(tag)
-#     url = HENRIK_V1_LIFETIME_MATCHES_API_URL.format(encoded_name, encoded_tag)
-#     print(url)
-#     data = get_data_from_api_url(url)
-#     lifetime_matches_list = data["data"]
-#     match_id_list = []
-#     for match_id in lifetime_matches_list:
-#         match_info = match_id["meta"]["id"]
-#         match_id_list.append(match_info)
+def get_match_id_list(name, tag):
+    encoded_name = quote(name)
+    encoded_tag = quote(tag)
+    url = HENRIK_V1_LIFETIME_MATCHES_API_URL.format(encoded_name, encoded_tag)
 
-#     return match_id_list
+    data = get_data_from_api_url(url)
+    lifetime_matches_list = data["data"]
+
+    match_id_list = [match["meta"]["id"] for match in lifetime_matches_list]
+    # print(match_id_list)
+    return match_id_list
 
 
-# TODO
-# def get_match_history(match_id_list):
-#     match_history = []
-#     for match_id in match_id_list:
-#         url = HENRIK_V2_MATCH_DETAIL_API_URL.format(match_id)
-#         print(url)
-#         data = get_data_from_api_url(url)
+def get_match_history(match_id_list):
+    match_history = []
 
-#         match_data = []
-#         lifetime_matches = data["data"]
-#         for match in lifetime_matches:
-#             match_info = {
-#                 "matchid": match["metadata"]["matchid"],
-#                 "players": match["players"]["allplayers"],
-#             }
-#             match_data.append(match_info)
+    for match_id in match_id_list:
+        url = HENRIK_V2_MATCH_DETAIL_API_URL.format(match_id)
+        data = get_data_from_api_url(url)
 
-#         match_history.append(match_data)
+        match_data = []
+        player_data = data["data"]["players"]["all_players"]
 
-#     return match_history
+        for player in player_data:
+            player_info = {
+                "name": player["name"],
+                "tag": player["tag"],
+                "team": player["team"],
+                "character": player["character"],
+                "currenttier": player["currenttier"],
+                "currenttier_patched": player["currenttier_patched"],
+                "agent_icon": player["assets"]["agent"]["small"],
+                "score": player["stats"]["score"],
+                "kills": player["stats"]["kills"],
+                "deaths": player["stats"]["deaths"],
+                "assists": player["stats"]["assists"],
+                "headshots": player["stats"]["headshots"],
+            }
+            match_data.append(player_info)
+
+        match_history.append(match_data)
+
+        print(match_history)
+
+    return match_history
 
 
 def search_val(request):
@@ -188,19 +201,17 @@ def search_val(request):
             account_data = get_account_data(name, tag)
             mmr_elo = get_mmr_elo(name, tag)
             mmr_record = get_mmr_record(name, tag)
-            # TODO
-            # match_id_list = get_match_id_list(name, tag)
-            # match_history = get_match_history(match_id_list)
+            match_id_list = get_match_id_list(name, tag)
+            match_history = get_match_history(match_id_list)
 
             return render(
                 request,
                 "val/profile_val.html",
                 {
                     "account_data": account_data,
-                    # TODO
-                    # "match_history": match_history,
                     "mmr_elo": mmr_elo,
                     "mmr_record": mmr_record,
+                    "match_history": match_history,
                 },
             )
         except Exception as e:

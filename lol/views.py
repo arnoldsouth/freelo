@@ -3,7 +3,7 @@ from django.shortcuts import render
 import requests
 
 
-RIOT_API_KEY = "RGAPI-56df76f6-4788-446f-801f-6d9920728ec2"
+RIOT_API_KEY = "RGAPI-c90d95e2-ef7b-4798-ae5e-79bf598aec9f"
 ACCOUNT_V1_API_URL = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{}/{}?api_key={}"
 SUMMONER_V4_BY_PUUID_API_URL = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{}?api_key={}"
 LEAGUE_V4_BY_ENCRYPTED_SUMMONER_ID_API_URL = "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{}?api_key={}"
@@ -110,6 +110,7 @@ def get_match_id_list(puuid):
 
 def get_match_history(match_id_list):
     match_history = []
+
     for match_id in match_id_list:
         url = MATCH_V5_BY_MATCH_ID_API_URL.format(match_id, RIOT_API_KEY)
         print(url)

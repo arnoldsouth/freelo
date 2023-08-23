@@ -26,18 +26,60 @@ profile_val
 <div>
     <img src="{{ mmr_elo.2 }}" alt="mmr_elo.2" width="64" height="64">
         
+    <div>Tier: {{ mmr_elo.1 }}</div>
+    <div>Ranked Rating: {{ mmr_elo.3 }}</div>
+    <div>Wins: {{ mmr_record.0 }}</div>
+    <div>Losses: {{ mmr_record.1 }}</div>
+</div>
+
+
+<div>
+    <h2>Match History</h2>
+    
+    {% if match_history %}
     <div>
-        Tier: {{ mmr_elo.1 }}
+        {% for match in match_history %}
+        <div>
+            <h3>Match ID: {{ forloop.counter }}</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>Tier</th>
+                        <th>Name</th>
+                        <th>Tag</th>
+                        <th>Agent</th>
+                        <th>Score</th>
+                        <th>Kills</th>
+                        <th>Deaths</th>
+                        <th>Assists</th>
+                        <th>Headshots</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in match %}
+                    <tr>
+                        <td>{{ player.team }}</td>
+                        <td>{{ player.currenttier_patched }}</td>
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.tag }}</td>
+                        <td>{{ player.character }}</td>
+                        <td>{{ player.score }}</td>
+                        <td>{{ player.kills }}</td>
+                        <td>{{ player.deaths }}</td>
+                        <td>{{ player.assists }}</td>
+                        <td>{{ player.headshots }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
     </div>
-    <div>
-        Ranked Rating: {{ mmr_elo.3 }}
-    </div>
-    <div>
-        Wins: {{ mmr_record.0 }}
-    </div>
-    <div>
-        Losses: {{ mmr_record.1 }}
-    </div>
+    {% else %}
+    <p>No matches found.</p>
+    {% endif %}
+
 </div>
 
 
