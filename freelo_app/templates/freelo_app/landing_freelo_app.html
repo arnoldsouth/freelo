@@ -1,5 +1,5 @@
 {% extends "freelo_app/layout.html" %}
-
+{% load static %}
 {% block title %}
 landing_freelo_app
 {% endblock %}
@@ -13,10 +13,11 @@ landing_freelo_app
     <div>
         <div>
             <a href="{% url 'landing_lol' %}" class="subheader">
-                lol
+                <img class="landing-page-icon" src="{% static 'freelo_app/lol-192x192.png' %}" alt="lol-icon" />
             </a>
+
             <a href="{% url 'landing_val' %}" class="subheader">
-                val
+                <img class="landing-page-icon" src="{% static 'freelo_app/val-192x192.png' %}" alt="val-icon" />
             </a>
         </div>
     </div>

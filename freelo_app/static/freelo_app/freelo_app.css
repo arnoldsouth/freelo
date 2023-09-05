@@ -30,8 +30,9 @@
 
 .subheader {
     /* margin: 0rem 0rem 0rem 1rem; */
-    padding: .5rem;
+    padding: 1rem;
     font-family: 'Unica One';
+    text-decoration: none;
 }
 
 .form-input {
@@ -45,4 +46,23 @@
     margin: .5rem 0rem;
     padding: .5rem 1rem;
     font-family: 'Figtree';
+}
+
+.leaderboards-content {
+    text-align: left;
+}
+
+.leaderboards-rank-column {
+    padding: 0rem 2rem 0rem 0rem;
+    /* width: 3rem; */
+}
+
+.leaderboards-player-data-columns {
+    padding: 0rem 2rem 0rem 0rem;
+    min-width: 6rem;
+    
+}
+
+.landing-page-icon {
+    width: 3rem;
 }

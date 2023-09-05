@@ -7,6 +7,8 @@
 
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'freelo_app/freelo_app.css' %}"/>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}">
+
 
     <title>{% block title %} {%endblock%}</title>
 </head>
@@ -14,8 +16,16 @@
 <body>
     <div class="navbar">
         <a href="{% url 'landing_freelo_app' %}" class="navbar-brand">freelo</a>
-        <a href="{% url 'landing_lol' %}" class="navbar-item">lol</a>
-        <a href="{% url 'landing_val' %}" class="navbar-item">val</a>
+        
+        <a href="{% url 'landing_lol' %}" class="navbar-item">
+            <img class="" src="{% static 'freelo_app/lol-16x16.png' %}" alt="lol-icon" />
+            lol
+        </a>
+        
+        <a href="{% url 'landing_val' %}" class="navbar-item">
+            <img class="" src="{% static 'freelo_app/val-16x16.png' %}" alt="val-icon" />
+            val
+        </a>
     </div>
     
     <div class="body-content">

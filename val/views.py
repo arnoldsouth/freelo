@@ -4,7 +4,7 @@ from django.shortcuts import render
 import requests
 
 
-RIOT_API_KEY = "RGAPI-c90d95e2-ef7b-4798-ae5e-79bf598aec9f"
+RIOT_API_KEY = "RGAPI-2d5cf26b-85f3-41af-8a41-a1f83478cc5f"
 ACCOUNT_V1_API_URL = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{}/{}?api_key={}"
 VAL_CONTENT_V1_BY_LOCALE_API_URL = "https://na.api.riotgames.com/val/content/v1/contents?locale=en-US&api_key={}"
 VAL_RANKED_V1_BY_ACT_API_URL = "https://na.api.riotgames.com/val/ranked/v1/leaderboards/by-act/{}?size=200&startIndex=0&api_key={}"
@@ -20,6 +20,17 @@ HENRIK_V1_LIFETIME_MATCHES_API_URL = "https://api.henrikdev.xyz/valorant/v1/life
 HENRIK_V2_MATCH_DETAIL_API_URL = (
     "https://api.henrikdev.xyz/valorant/v2/match/{}"
 )
+
+TIER_MAPPING = {
+    24: "Immortal 1",
+    25: "Immortal 2",
+    26: "Immortal 3",
+    27: "Radiant",
+}
+
+
+def get_tier(tier):
+    return TIER_MAPPING.get(tier, tier)
 
 
 def landing_val(request):
@@ -91,7 +102,21 @@ def leaderboards_val(request):
             "leaderboardRank": player.get("leaderboardRank"),
             "rankedRating": player.get("rankedRating"),
             "numberOfWins": player.get("numberOfWins"),
-            "competitiveTier": player.get("competitiveTier"),
+            "competitiveTier": "Radiant"
+            if player.get("competitiveTier") == 27
+            else (
+                "Immortal 3"
+                if player.get("competitiveTier") == 26
+                else (
+                    "Immortal 2"
+                    if player.get("competitiveTier") == 25
+                    else (
+                        "Immortal 1"
+                        if player.get("competitiveTier") == 24
+                        else player.get("competitiveTier")
+                    )
+                )
+            ),
         }
         for player in players
     ]

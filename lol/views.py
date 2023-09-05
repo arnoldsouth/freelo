@@ -3,7 +3,7 @@ from django.shortcuts import render
 import requests
 
 
-RIOT_API_KEY = "RGAPI-c90d95e2-ef7b-4798-ae5e-79bf598aec9f"
+RIOT_API_KEY = "RGAPI-2d5cf26b-85f3-41af-8a41-a1f83478cc5f"
 ACCOUNT_V1_API_URL = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{}/{}?api_key={}"
 SUMMONER_V4_BY_PUUID_API_URL = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{}?api_key={}"
 LEAGUE_V4_BY_ENCRYPTED_SUMMONER_ID_API_URL = "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{}?api_key={}"
@@ -143,12 +143,14 @@ def leaderboards_lol(request):
     data = get_data_from_api_url(url)
 
     players = data["entries"]
+    tier = data["tier"].capitalize()
 
     leaderboard_data = sorted(
         [
             {
                 "summonerName": player.get("summonerName"),
                 "leaguePoints": player.get("leaguePoints"),
+                "tier": tier,
                 "rank": player.get("rank"),
                 "wins": player.get("wins"),
                 "losses": player.get("losses"),
